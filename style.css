@@ -1,0 +1,19 @@
+.canvas{
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  z-index: 1;
+}
+.container{
+  z-index: -1;
+}
+.game{
+  z-index: 0;
+}
+html, body{
+  margin: 0;
+  padding: 0;
+}
+canvas{
+  box-shadow: 0px 0px 10px;
+}
