@@ -21,6 +21,9 @@ app.Game = {
   lastTime: 0, //The last actual time since the frame changed
   timer: 0, //Timer
   gameState: app.GAME_STATES.DEFAULT, //The state of the game
+  
+  player: undefined, //player character
+  enemies: [],  //array of enemy characters
 
   //tileAudio : undefined, //Audio Var
 
@@ -52,6 +55,29 @@ app.Game = {
 	this.levelScore = 0; //Reset the score
 	this.moveCount = 0; //Reset Moves
 	
+  },
+  
+  //check for collisions with enemy npcs
+  checkForCollisions: function()
+  {
+	this.enemies.forEach(function(enemy) {
+		if( self.collides(enemy, self.player)) {
+		
+		}
+	}
+  },
+  
+  //check collisions between two characters
+  collides: function(a, b) {
+	var ax = a.x - a.width/2;
+	var ay = a.y - a.height/2;
+	var bx = b.x - b.width/2;
+	var by = b.y - b.height/2;
+	
+	return ax < bx + b.widht &&
+		   ax + a.width > bx &&
+		   ay < by + b.height &&
+		   ay + a.height > by;
   },
 
   // Mouse goes down

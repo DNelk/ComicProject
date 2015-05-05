@@ -22,6 +22,11 @@ app.Enemy = function(){
 		this.height; //sprite sheet
 	};
 	
+	function enemyDeath()
+	{
+		
+	};
+	
 	var p = Enemy.prototype;
 	
 	p.draw = function(ctx) {
