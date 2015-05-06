@@ -14,13 +14,13 @@ app.Player = function(){
 	    this.width = 50;
 	    this.height = 50;
 	    this.age = 1.0;
-        this.speed = 5;
+        this.speed = 500;
 	    this.health = 100;
 	    //this.image: undefined,
 	   //this.drawLib: undefined,
 	    this.r = 1.0;
-        this.g = 1.0;
-        this.b = 1.0;
+        this.g = 0.0;
+        this.b = 0.0;
         this.a = 1.0;
     };
 
@@ -54,6 +54,7 @@ app.Player = function(){
         ctx.save();
         ctx.translate(this.x, this.y);
         ctx.fillStyle = 'rgba('+this.r+","+this.g+","+this.b+","+this.a+")";
+        console.log(ctx.fillStyle);
         ctx.fillRect(-halfW, -halfW, this.width, this.height);
         ctx.restore();
 	};
@@ -61,6 +62,7 @@ app.Player = function(){
 	//movement for the player
 	p.moveLeft = function(dt){
 		this.x -= this.speed * this.age * dt;
+        console.log(dt);
 	};
 	
 	p.moveRight = function(dt){

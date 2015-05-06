@@ -159,7 +159,7 @@ app.Game = {
     // Draw
     this.drawBackground();
 	this.drawGUI();
-    this.player.draw(ctx);
+    this.player.draw(this.ctx);
       
     if(this.paused){
       this.drawPauseScreen();
