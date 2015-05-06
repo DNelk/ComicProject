@@ -57,16 +57,16 @@ app.Game = {
 	this.moveCount = 0; //Reset Moves
 	this.timer = 0;
 	this.fillEnemies();
+    this.player = new app.Player(320,320);
   },
   
   //check for collisions with enemy npcs
-  checkForCollisions: function()
-  {
+  checkForCollisions: function() {
 	this.enemies.forEach(function(enemy) {
 		if( self.collides(enemy, self.player)) {
 		
 		}
-	}
+    })
   },
   
   //check collisions between two characters
@@ -128,18 +128,22 @@ app.Game = {
 	//KEY PRESSES
 	if(app.keysDown[app.KEYS.KEY_S]){
 		app.keysDown[app.KEYS.KEY_S] = false; //So they only register once
+        this.player.moveDown(dt);
 	}                      
 	                       
 	if(app.keysDown[app.KEYS.KEY_W]){
 		app.keysDown[app.KEYS.KEY_W] = false; //So they only register once
+        this.player.moveUp(dt);
 	}                      
 	                       
 	if(app.keysDown[app.KEYS.KEY_A]){
 		app.keysDown[app.KEYS.KEY_A] = false; //So they only register once
+        this.player.moveLeft(dt);
 	}                      
                            
 	if(app.keysDown[app.KEYS.KEY_D]){
 		app.keysDown[app.KEYS.KEY_D] = false; //So they only register once
+        this.player.moveRight(dt);
 	}                      
 	                       
 	if(app.keysDown[app.KEYS.KEY_ENTER]){
@@ -155,7 +159,8 @@ app.Game = {
     // Draw
     this.drawBackground();
 	this.drawGUI();
-
+    this.player.draw(ctx);
+      
     if(this.paused){
       this.drawPauseScreen();
       return; //Don't count this as a frame since no one was playing

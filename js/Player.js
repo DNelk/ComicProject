@@ -3,29 +3,39 @@ Tim Cotanch
 Player module
 */
 
-"use strict";
+'use strict'
 
 var app = app || {};
 
-app.Player = {
-	//global properties of the player character
-	color: "black",
-	x: 320,
-	y: 420,
-	width: 50,
-	height: 50,
-	age: 0,
-	health: 100,
-	image: undefined,
-	drawLib: undefined,
-	
-	//draw the player sprite
-	draw: function(ctx) 
-	{
-		var halfW = this.width/2;
+app.Player = function(){
+	function Player(x, y){
+	    this.x = x;
+	    this.y = y;
+	    this.width = 50;
+	    this.height = 50;
+	    this.age = 1.0;
+        this.speed = 5;
+	    this.health = 100;
+	    //this.image: undefined,
+	   //this.drawLib: undefined,
+	    this.r = 1.0;
+        this.g = 1.0;
+        this.b = 1.0;
+        this.a = 1.0;
+    };
+
+    var p = Player.prototype;
+    
+    p.update = function(dt){
+        
+    };
+    //draw the player sprite
+	p.draw = function(ctx) {
+		
+        var halfW = this.width/2;
 		var halfH = this.height/2;
 		var sourceX; //X from spritesheet
-		var sourceY; //Y from spritesheet
+		/*var sourceY; //Y from spritesheet
 		var sourceWidth; //Width from spritesheet
 		var sourceHeight; //Height from spritesheet
 		var destWidth = sourceWidth;
@@ -40,27 +50,30 @@ app.Player = {
 		else
 		{
 			ctx.drawImage(this.image, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, this.width, this.height);
-		}
-	},
+		}*/
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.fillStyle = 'rgba('+this.r+","+this.g+","+this.b+","+this.a+")";
+        ctx.fillRect(-halfW, -halfW, this.width, this.height);
+        ctx.restore();
+	};
 	
 	//movement for the player
-	moveLeft: function(dt)
-	{
-		this.x -= this.age * dt;
-	},
+	p.moveLeft = function(dt){
+		this.x -= this.speed * this.age * dt;
+	};
 	
-	moveRight: function(dt)
-	{
-		this.x += this.age * dt;
-	},
+	p.moveRight = function(dt){
+		this.x += this.speed * this.age * dt;
+	};
 	
-	moveUp: function(dt)
-	{
-		this.y -= this.age * dt;
-	},
+	p.moveUp = function(dt){
+		this.y -= this.speed * this.age * dt;
+	};
 	
-	moveDown: function(dt)
-	{
-		this.y += this.age * dt;
-	},
-};
+	p.moveDown = function(dt){
+		this.y += this.speed * this.age * dt;
+	};
+    
+    return Player;
+}();
