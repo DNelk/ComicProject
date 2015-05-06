@@ -20,6 +20,8 @@ app.Game = {
   totalScore: 0, //Overall Score - maybe use later
   lastTime: 0, //The last actual time since the frame changed
   timer: 0, //Timer
+  enemies: [], //Array of enemies
+  
   gameState: app.GAME_STATES.DEFAULT, //The state of the game
 
   //tileAudio : undefined, //Audio Var
@@ -48,10 +50,10 @@ app.Game = {
   },
 
   reset: function(){
-   
 	this.levelScore = 0; //Reset the score
 	this.moveCount = 0; //Reset Moves
-	
+	this.timer = 0;
+	this.fillEnemies();
   },
 
   // Mouse goes down
@@ -66,23 +68,13 @@ app.Game = {
   //Mouse goes up
   doMouseUp: function(e){
     this.isMouseDown = false;
-
+	
 	//Unpause
     if(this.paused){
       this.paused = false;
       this.update();
       return;
     }
-
-	//Start over if the round is over
-  	if(this.gameState == app.GAME_STATES.ROUND_OVER){
-  		this.gameState = app.GAME_STATES.DEFAULT;
-  		this.levelIndex++;
-		this.totalScore += this.levelScore;
-  		this.reset();
-  		this.update();
-  		return;
-  	}
 
   	//Start all over if the game is over
     if(this.gameState == app.GAME_STATES.GAME_OVER){
@@ -107,6 +99,28 @@ app.Game = {
     // Update deltaTime
     var dt = this.calculateDeltaTime();
 
+	//KEY PRESSES
+	if(app.keysDown[app.KEYS.KEY_S]){
+		app.keysDown[app.KEYS.KEY_S] = false; //So they only register once
+	}                      
+	                       
+	if(app.keysDown[app.KEYS.KEY_W]){
+		app.keysDown[app.KEYS.KEY_W] = false; //So they only register once
+	}                      
+	                       
+	if(app.keysDown[app.KEYS.KEY_A]){
+		app.keysDown[app.KEYS.KEY_A] = false; //So they only register once
+	}                      
+                           
+	if(app.keysDown[app.KEYS.KEY_D]){
+		app.keysDown[app.KEYS.KEY_D] = false; //So they only register once
+	}                      
+	                       
+	if(app.keysDown[app.KEYS.KEY_ENTER]){
+		app.keysDown[app.KEYS.KEY_ENTER] = false; //So they only register once
+	}
+		
+		
     // Check paused
     // Update methods go in here
     if(!this.paused){
@@ -114,7 +128,6 @@ app.Game = {
 
     // Draw
     this.drawBackground();
-    this.drawBlocks();
 	this.drawGUI();
 
     if(this.paused){
@@ -177,6 +190,7 @@ app.Game = {
   	  this.ctx.fillStyle = "black";
   	  this.ctx.fillRect(0,0,app.CANVAS_WIDTH, app.CANVAS_HEIGHT);
   	  this.ctx.restore();
+  	  this.ctx.restore();
   	  this.drawText("Round Over!", app.CANVAS_WIDTH/2, app.CANVAS_HEIGHT/2 - 40, 50, "white");
   	  this.drawText("Click anywhere to continue...", app.CANVAS_WIDTH/2, app.CANVAS_HEIGHT/2 + 35, 35, "white");
       this.ctx.restore();
@@ -196,6 +210,11 @@ app.Game = {
 	  this.drawText("Final Score: " + this.levelScore, app.CANVAS_WIDTH/2, app.CANVAS_HEIGHT/2 + 30, 25, "#white");
       this.ctx.restore();
     }
+  },
+  
+  //Fill the enemies array with enemies
+  fillEnemies: function(){
+  
   },
   
   // Utilities

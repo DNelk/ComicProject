@@ -16,7 +16,6 @@ app.Player = {
 	height: 50,
 	age: 0,
 	health: 100,
-	age: 0,
 	image: undefined,
 	drawLib: undefined,
 	

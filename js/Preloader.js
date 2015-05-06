@@ -14,6 +14,16 @@ window.addEventListener('load', init);
 app.CANVAS_HEIGHT = 600;
 app.CANVAS_WIDTH = 800;
 
+//Keys
+app.KEYS = {
+	KEY_S: 83,
+	KEY_W: 87,
+	KEY_A: 65,
+	KEY_D: 68,
+	KEY_ENTER: 13
+};
+
+app.keysDown = [];
 
 // Media
 app.IMAGES = {
@@ -32,12 +42,18 @@ app.SOUNDS = {
 app.GAME_STATES = Object.freeze({
   BEGIN: 0,
   DEFAULT: 1,
-  CLICKED: 2,
-  ROUND_OVER: 3,
-  GAME_OVER: 4
+  ROUND_OVER: 2,
+  GAME_OVER: 3
 })
 
 function init(){
+	window.addEventListener("keydown", function(e){
+			app.keysDown[e.keyCode] = true;
+	});
+	
+	window.addEventListener("keyup", function(e){
+			app.keysDown[e.keyCode] = false;
+	});
 	app.Game.init(app);
   // Preload images and sounds
 	/*app.queue = new createjs.LoadQueue(false);
