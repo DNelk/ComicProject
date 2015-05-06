@@ -1,7 +1,9 @@
 /*Player.js
-Tim Cotanch
-Player module
+ *Tim Cotanch
+ *Last Modified: 5/6/15
+ *Player Module
 */
+
 
 'use strict'
 
@@ -53,8 +55,7 @@ app.Player = function(){
 		}*/
         ctx.save();
         ctx.translate(this.x, this.y);
-        ctx.fillStyle = 'rgba('+this.r+","+this.g+","+this.b+","+this.a+")";
-        console.log(ctx.fillStyle);
+        ctx.fillStyle = 'rgba('+this.r*255+","+this.g*255+","+this.b*255+","+this.a+")";
         ctx.fillRect(-halfW, -halfW, this.width, this.height);
         ctx.restore();
 	};
@@ -77,5 +78,7 @@ app.Player = function(){
 		this.y += this.speed * this.age * dt;
 	};
     
+    p.fire = function(){
+    }
     return Player;
 }();

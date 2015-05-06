@@ -1,6 +1,6 @@
 /*Game.js
  *Dylan Nelkin
- *Last Modified: 4/26/15
+ *Last Modified: 5/6/15
  *The actual code and logic of the game, also the drawing
 */
 

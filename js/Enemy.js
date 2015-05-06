@@ -1,61 +1,84 @@
 /*Enemy.js
-Tim Cotanch
-It's the enemies
+ *Tim Cotanch
+ *Last Modified: 5/6/15
+ *The actual code and logic of the game, also the drawing
 */
 
-"use strict";
+
+'use strict'
 
 var app = app || {};
 
 app.Enemy = function(){
-	
-	
-	function Enemy(image, canvasWidth, canvasHeight) 
-	{
-		this.canvasWidth = canvasWidth;
-		this.canvasHeight = canvasHeight;
-		this.color = 'black';
-		this.x;
-		this.y;
-		this.image = image;
-		this.width; // sprite sheet
-		this.height; //sprite sheet
-	};
-	
-	function enemyDeath()
-	{
-		
-	};
-	
-	var p = Enemy.prototype;
-	
+	function Enemy(x, y){
+	    this.x = x;
+	    this.y = y;
+	    this.width = 50;
+	    this.height = 50;
+	    this.age = 1.0;
+        this.speed = 500;
+	    this.health = 100;
+	    //this.image: undefined,
+	   //this.drawLib: undefined,
+	    this.r = 1.0;
+        this.g = 0.0;
+        this.b = 0.0;
+        this.a = 1.0;
+    };
+
+    var p = Enemy.prototype;
+    
+    p.update = function(dt){
+        
+    };
+    //draw the enemy sprite
 	p.draw = function(ctx) {
-		var halfW = this.width/2;
+		
+        var halfW = this.width/2;
 		var halfH = this.height/2;
-		var sourceX = 52;
-		var sourceY = 98;
-		var sourceWidth = 17;
-		var sourceHeight = 20;
+		var sourceX; //X from spritesheet
+		/*var sourceY; //Y from spritesheet
+		var sourceWidth; //Width from spritesheet
+		var sourceHeight; //Height from spritesheet
 		var destWidth = sourceWidth;
 		var destHeight = sourceHeight;
-		var destX = this.x - this.width / 2;
-		var destY = this.y - this.height / 2;
+		var desX = this.x - halfW;
+		var desY = this.y - halfH;
 		
-		
-		if(!this.image){
-			ctx.fillStyle = this.color;
-			ctx.fillRect(this.x - halfW, this.y - halfH, this.width, this.height);
+		if(!this.image)
+		{
+			this.drawLib.rect(ctx, this.x - halfW, this.y - halfH, this.width, this.height, this.color);
 		}
-		
-		else{
+		else
+		{
 			ctx.drawImage(this.image, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, this.width, this.height);
-		}
+		}*/
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.fillStyle = 'rgba('+this.r*255+","+this.g*255+","+this.b*255+","+this.a+")";
+        ctx.fillRect(-halfW, -halfW, this.width, this.height);
+        ctx.restore();
 	};
 	
-	p.update = function(dt) {
-		//move enemy and all that
-	};	
+	//movement for the enemy
+	p.moveLeft = function(dt){
+		this.x -= this.speed * this.age * dt;
+        console.log(dt);
+	};
 	
-	return enemy;
-
+	p.moveRight = function(dt){
+		this.x += this.speed * this.age * dt;
+	};
+	
+	p.moveUp = function(dt){
+		this.y -= this.speed * this.age * dt;
+	};
+	
+	p.moveDown = function(dt){
+		this.y += this.speed * this.age * dt;
+	};
+    
+    p.fire = function(){
+    }
+    return Enemy;
 }();
