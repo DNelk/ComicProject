@@ -169,10 +169,14 @@ app.Game = {
 		   }
         this.player.update(dt);
 		
-		//loop through bullets and make them move
+		//loop through bullets and make them move, and delete them if necessary
 		for( var i = 0; i < this.player.bullets.length; i++ )
 		{
 			this.player.bullets[i].update(dt);
+			if(!this.player.bullets[i].active){
+				this.player.bullets.splice(i,1);
+				i--;
+			}
 		}
     }
 

@@ -26,6 +26,8 @@ app.Player = function(){
         this.b = 0.0;
         this.a = 1.0;
 		this.bullets = [];
+		this.direction = 1;
+		this.bulletSpeed = 1000;
     };
 
     var p = Player.prototype;
@@ -78,10 +80,12 @@ app.Player = function(){
 	//movement for the player
 	p.moveLeft = function(){
 		this.accel.x -= this.speed * this.age;
+		this.direction = -1;
 	};
 	
 	p.moveRight = function(){
 		this.accel.x += this.speed * this.age;
+		this.direction = 1;
 	};
 	
 	p.jump = function(dt){
@@ -93,7 +97,7 @@ app.Player = function(){
 
     //Fire projectile
     p.fire = function(){
-		this.bullets.push(new app.Bullet(this.pos.x, this.pos.y, 100));
+		this.bullets.push(new app.Bullet(this.pos.x, this.pos.y, this.bulletSpeed * this.direction * this.age));
     };
     
     //Age the player

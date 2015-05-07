@@ -11,11 +11,10 @@ app.Bullet = function(){
 	function Bullet(x, y, speed){
 		this.pos = {x:x, y:y};
 		this.active = true;
-		this.vel = {x:-speed, y:0};
-		this.width = 3;
-		this.height = 3;
+		this.vel = {x:speed, y:0};
+		this.width = 10;
+		this.height = 10;
 		this.color = "black";
-		console.log(this.pos);
 	};
 	
 	var p = Bullet.prototype;
@@ -23,7 +22,8 @@ app.Bullet = function(){
 	p.update = function(dt){
 		this.pos.x += this.vel.x * dt;
 		this.pos.y += this.vel.y * dt;
-		this.active = this.active && checkOutOfBounds(this.pos, this.width, this.height);
+		this.active = checkOutOfBounds(this.pos, this.width, this.height);
+		//console.log(this.active);
 	};
 	
 	//Draw the projectile
@@ -39,7 +39,10 @@ app.Bullet = function(){
 	//Check if bullet leaves screen
 	function checkOutOfBounds(pos, width, height)
 	{
-		return pos.x >= -width || pos.x <= app.CANVAS_WIDTH + width;
+		if( pos.x <= -width || pos.x >= app.CANVAS_WIDTH + width)
+			return false;
+		else
+			return true;
 	};
 	
 	return Bullet;
