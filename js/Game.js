@@ -124,36 +124,34 @@ app.Game = {
   update: function(){
     // Update deltaTime
     var dt = this.calculateDeltaTime();
-
-	//KEY PRESSES
-	if(app.keysDown[app.KEYS.KEY_S]){
-		app.keysDown[app.KEYS.KEY_S] = false; //So they only register once
-        this.player.moveDown(dt);
-	}                      
-	                       
-	if(app.keysDown[app.KEYS.KEY_W]){
-		app.keysDown[app.KEYS.KEY_W] = false; //So they only register once
-        this.player.moveUp(dt);
-	}                      
-	                       
-	if(app.keysDown[app.KEYS.KEY_A]){
-		app.keysDown[app.KEYS.KEY_A] = false; //So they only register once
-        this.player.moveLeft(dt);
-	}                      
-                           
-	if(app.keysDown[app.KEYS.KEY_D]){
-		app.keysDown[app.KEYS.KEY_D] = false; //So they only register once
-        this.player.moveRight(dt);
-	}                      
-	                       
-	if(app.keysDown[app.KEYS.KEY_ENTER]){
-		app.keysDown[app.KEYS.KEY_ENTER] = false; //So they only register once
-	}
-		
-		
+	
     // Check paused
     // Update methods go in here
     if(!this.paused){
+        //KEY PRESSES
+	       if(app.keysDown[app.KEYS.KEY_S]){
+	       	   app.keysDown[app.KEYS.KEY_S] = false; //So they only register once
+	       }                      
+	                              
+	       if(app.keysDown[app.KEYS.KEY_W]){
+               app.keysDown[app.KEYS.KEY_W] = false; //So they only register once
+                this.player.jump();
+	       }                      
+	                              
+	       if(app.keysDown[app.KEYS.KEY_A]){
+	       	app.keysDown[app.KEYS.KEY_A] = false; //So they only register once
+               this.player.moveLeft();
+	       }                      
+                                   
+	       if(app.keysDown[app.KEYS.KEY_D]){
+	       	   app.keysDown[app.KEYS.KEY_D] = false; //So they only register once
+                this.player.moveRight();
+	       }                      
+	                              
+	       if(app.keysDown[app.KEYS.KEY_ENTER]){
+	       	   app.keysDown[app.KEYS.KEY_ENTER] = false; //So they only register once
+	       }
+        this.player.update(dt);
     }
 
     // Draw
