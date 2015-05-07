@@ -25,6 +25,7 @@ app.Player = function(){
         this.g = 0.0;
         this.b = 0.0;
         this.a = 1.0;
+		this.bullets = [];
     };
 
     var p = Player.prototype;
@@ -66,7 +67,7 @@ app.Player = function(){
 		else
 		{
 			ctx.drawImage(this.image, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, this.width, this.height);
-		}*/
+		}
         ctx.save();
         ctx.translate(this.pos.x, this.pos.y);
         ctx.fillStyle = 'rgba('+this.r*255+","+this.g*255+","+this.b*255+","+this.a+")";
@@ -91,7 +92,8 @@ app.Player = function(){
 	};
 
     //Fire projectile
-    p.fire = function(){
+    p.fire = function(x, y){
+		this.bullets.push(new app.Bullet(x, y, 100));
     }
     
     //Age the player

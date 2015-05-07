@@ -20,12 +20,10 @@ app.Game = {
   totalScore: 0, //Overall Score - maybe use later
   lastTime: 0, //The last actual time since the frame changed
   timer: 0, //Timer
-  enemies: [], //Array of enemies
+  player: undefined, //Player character
+  enemies: [],  //Array of enemy characters
   
   gameState: app.GAME_STATES.DEFAULT, //The state of the game
-  
-  player: undefined, //player character
-  enemies: [],  //array of enemy characters
 
   //tileAudio : undefined, //Audio Var
 
@@ -60,13 +58,24 @@ app.Game = {
     this.player = new app.Player(320,320);
   },
   
-  //check for collisions with enemy npcs
+  //check for collisions 
   checkForCollisions: function() {
+	//check for player collision with enemy
 	this.enemies.forEach(function(enemy) {
 		if( self.collides(enemy, self.player)) {
-		
+			player.health -= 10;
 		}
-    })
+    });
+	
+	//check collisions with each bullet and enemy
+	player.bullets.forEach(function(bullet) {
+		self.enemies.forEach(function(enemy) {
+			if( self.collides(bullet, enemy)) {
+				enemy.health -= 2;
+				bullet.active = false;
+			}
+		});
+	});
   },
   
   //check collisions between two characters
@@ -118,7 +127,7 @@ app.Game = {
     if(this.gameState != app.GAME_STATES.CLICKED){ //Can we click again?   
 		var mouse = app.Utilities.getMouse(e); //Get the mouse
     }
-  },
+  }, 
 
   // Update the game
   update: function(){
@@ -151,7 +160,18 @@ app.Game = {
 	       if(app.keysDown[app.KEYS.KEY_ENTER]){
 	       	   app.keysDown[app.KEYS.KEY_ENTER] = false; //So they only register once
 	       }
+		   
+		   if(app.keysDown[app.KEYS.KEY_SPACE]){
+				app.keysDown[app.KEYS.KEY_SPACE] = false; //So they only register once
+				this.player.fire(this.player.x, this.player.y);
+		   }
         this.player.update(dt);
+		
+		//loop through bullets and make them move
+		for( var i = 0; i < this.player.bullets.length; i++ )
+		{
+			this.player.bullets.update(this.dt);
+		}
     }
 
     // Draw
