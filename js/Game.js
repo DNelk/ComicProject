@@ -159,18 +159,20 @@ app.Game = {
 	                              
 	       if(app.keysDown[app.KEYS.KEY_ENTER]){
 	       	   app.keysDown[app.KEYS.KEY_ENTER] = false; //So they only register once
+			   this.player.fire();
 	       }
 		   
 		   if(app.keysDown[app.KEYS.KEY_SPACE]){
 				app.keysDown[app.KEYS.KEY_SPACE] = false; //So they only register once
-				this.player.fire(this.player.x, this.player.y);
+				this.player.fire();
+				console.log("fire");
 		   }
         this.player.update(dt);
 		
 		//loop through bullets and make them move
 		for( var i = 0; i < this.player.bullets.length; i++ )
 		{
-			this.player.bullets.update(this.dt);
+			this.player.bullets[i].update(dt);
 		}
     }
 
@@ -178,7 +180,9 @@ app.Game = {
     this.drawBackground();
 	this.drawGUI();
     this.player.draw(this.ctx);
-      
+    for( var i = 0; i < this.player.bullets.length; i++ ){
+			this.player.bullets[i].draw(this.ctx);
+	} 
     if(this.paused){
       this.drawPauseScreen();
       return; //Don't count this as a frame since no one was playing

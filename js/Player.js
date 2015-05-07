@@ -60,14 +60,14 @@ app.Player = function(){
 		
         var halfW = this.width/2;
 		var halfH = this.height/2;
-		if(!this.image)
+		/*if(!this.image)
 		{
 			this.drawLib.rect(ctx, this.x - halfW, this.y - halfH, this.width, this.height, this.color);
 		}
 		else
 		{
 			ctx.drawImage(this.image, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, this.width, this.height);
-		}
+		}*/
         ctx.save();
         ctx.translate(this.pos.x, this.pos.y);
         ctx.fillStyle = 'rgba('+this.r*255+","+this.g*255+","+this.b*255+","+this.a+")";
@@ -92,12 +92,12 @@ app.Player = function(){
 	};
 
     //Fire projectile
-    p.fire = function(x, y){
-		this.bullets.push(new app.Bullet(x, y, 100));
-    }
+    p.fire = function(){
+		this.bullets.push(new app.Bullet(this.pos.x, this.pos.y, 100));
+    };
     
     //Age the player
     p.age = function(){
-    }
+    };
     return Player;
 }();
