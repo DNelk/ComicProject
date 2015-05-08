@@ -8,13 +8,14 @@
 var app = app || {};
 
 app.Bullet = function(){
-	function Bullet(x, y, speed){
+	function Bullet(x, y, speed, damage){
 		this.pos = {x:x, y:y};
 		this.active = true;
 		this.vel = {x:speed, y:0};
 		this.width = 10;
 		this.height = 10;
 		this.color = "black";
+		this.damage = damage;
 	};
 	
 	var p = Bullet.prototype;
@@ -22,7 +23,7 @@ app.Bullet = function(){
 	p.update = function(dt){
 		this.pos.x += this.vel.x * dt;
 		this.pos.y += this.vel.y * dt;
-		this.active = checkOutOfBounds(this.pos, this.width, this.height);
+		this.active = this.active && checkOutOfBounds(this.pos, this.width, this.height);
 		//console.log(this.active);
 	};
 	

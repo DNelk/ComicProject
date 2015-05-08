@@ -22,7 +22,7 @@ app.Game = {
   timer: 0, //Timer
   player: undefined, //Player character
   enemies: [],  //Array of enemy characters
-  
+  enemyCount: 10,
   gameState: app.GAME_STATES.DEFAULT, //The state of the game
 
   //tileAudio : undefined, //Audio Var
@@ -55,23 +55,24 @@ app.Game = {
 	this.moveCount = 0; //Reset Moves
 	this.timer = 0;
 	this.fillEnemies();
-    this.player = new app.Player(320,320);
+    this.player = new app.Player(320,app.CANVAS_HEIGHT);
   },
   
   //check for collisions 
   checkForCollisions: function() {
 	//check for player collision with enemy
 	this.enemies.forEach(function(enemy) {
-		if( self.collides(enemy, self.player)) {
-			player.health -= 10;
+		if( app.Game.collides(enemy, app.Game.player)) {
+			app.Game.player.health -= 10;
 		}
     });
 	
 	//check collisions with each bullet and enemy
-	player.bullets.forEach(function(bullet) {
-		self.enemies.forEach(function(enemy) {
-			if( self.collides(bullet, enemy)) {
-				enemy.health -= 2;
+	this.player.bullets.forEach(function(bullet) {
+		app.Game.enemies.forEach(function(enemy) {
+			console.log(bullet.active);
+			if( app.Game.collides(bullet, enemy) && bullet.active) {
+				enemy.health -= bullet.damage;
 				bullet.active = false;
 			}
 		});
@@ -80,12 +81,12 @@ app.Game = {
   
   //check collisions between two characters
   collides: function(a, b) {
-	var ax = a.x - a.width/2;
-	var ay = a.y - a.height/2;
-	var bx = b.x - b.width/2;
-	var by = b.y - b.height/2;
+	var ax = a.pos.x - a.width/2;
+	var ay = a.pos.y - a.height/2;
+	var bx = b.pos.x - b.width/2;
+	var by = b.pos.y - b.height/2;
 	
-	return ax < bx + b.widht &&
+	return ax < bx + b.width &&
 		   ax + a.width > bx &&
 		   ay < by + b.height &&
 		   ay + a.height > by;
@@ -169,6 +170,14 @@ app.Game = {
 		   }
         this.player.update(dt);
 		
+		for( var i = 0; i < this.enemies.length; i++ ){
+			this.enemies[i].update(dt);
+			if(this.enemies[i].dead){
+				this.enemies.splice(i,1);
+				i--;
+			}
+		} 
+		
 		//loop through bullets and make them move, and delete them if necessary
 		for( var i = 0; i < this.player.bullets.length; i++ )
 		{
@@ -178,12 +187,17 @@ app.Game = {
 				i--;
 			}
 		}
+		
+		this.checkForCollisions();
     }
 
     // Draw
     this.drawBackground();
 	this.drawGUI();
     this.player.draw(this.ctx);
+	for( var i = 0; i < this.enemies.length; i++ ){
+			this.enemies[i].draw(this.ctx);
+	} 
     for( var i = 0; i < this.player.bullets.length; i++ ){
 			this.player.bullets[i].draw(this.ctx);
 	} 
@@ -271,7 +285,9 @@ app.Game = {
   
   //Fill the enemies array with enemies
   fillEnemies: function(){
-  
+		for(var i = 0; i < this.enemyCount; i++){
+			this.enemies.push(new app.Enemy(app.Utilities.getRandom(0, app.CANVAS_WIDTH), app.Utilities.getRandom(-200,0)));
+		}
   },
   
   // Utilities

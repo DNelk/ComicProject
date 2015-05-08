@@ -14,21 +14,26 @@ app.Enemy = function(){
 	    this.pos = {x:x, y:y}; //Position
         this.accel = {x:0.0, y:0.0}; //Acceleration
         this.vel = {x:0.0, y:0.0}; //Acceleration
-	    this.width = 50;
-	    this.height = 50;
+	    this.width = 30;
+	    this.height = 30;
         this.speed = 100;
         this.jumpHeight = 20;
         this.jumping = true;
 	    this.health = 10;
-	    this.r = 1.0;
-        this.g = 0.0;
-        this.b = 0.0;
+		this.dead = false;
+	    this.r = 0.25;
+        this.g = 0.25;
+        this.b = 0.25;
         this.a = 1.0;
     };
 
     var p = Enemy.prototype;
     
     p.update = function(dt){
+		if(this.health <= 0){
+			this.dead = true;
+			return;
+		}
         //Move
         this.vel.x = 0;
         this.vel.x += this.accel.x;
@@ -55,12 +60,11 @@ app.Enemy = function(){
     };
     //draw the enemy sprite
 	p.draw = function(ctx) {
-		
         var halfW = this.width/2;
 		var halfH = this.height/2;
         ctx.save();
         ctx.translate(this.pos.x, this.pos.y);
-        ctx.fillStyle = 'rgba('+this.r*255+","+this.g*255+","+this.b*255+","+this.a+")";
+        ctx.fillStyle = 'rgba('+Math.floor(this.r*255)+","+Math.floor(this.g*255)+","+Math.floor(this.b*255)+","+this.a+")";
         ctx.fillRect(-halfW, -halfW, this.width, this.height);
         ctx.restore();
 	};

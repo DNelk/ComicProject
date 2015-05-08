@@ -28,6 +28,7 @@ app.Player = function(){
 		this.bullets = [];
 		this.direction = 1;
 		this.bulletSpeed = 1000;
+		this.bulletDamage = 10;
     };
 
     var p = Player.prototype;
@@ -72,7 +73,7 @@ app.Player = function(){
 		}*/
         ctx.save();
         ctx.translate(this.pos.x, this.pos.y);
-        ctx.fillStyle = 'rgba('+this.r*255+","+this.g*255+","+this.b*255+","+this.a+")";
+        ctx.fillStyle = 'rgba('+Math.floor(this.r*255)+","+Math.floor(this.g*255)+","+Math.floor(this.b*255)+","+this.a+")";
         ctx.fillRect(-halfW, -halfW, this.width, this.height);
         ctx.restore();
 	};
@@ -97,7 +98,7 @@ app.Player = function(){
 
     //Fire projectile
     p.fire = function(){
-		this.bullets.push(new app.Bullet(this.pos.x, this.pos.y, this.bulletSpeed * this.direction * this.age));
+		this.bullets.push(new app.Bullet(this.pos.x, this.pos.y, this.bulletSpeed * this.direction * this.age, this.bulletDamage * this.age));
     };
     
     //Age the player
