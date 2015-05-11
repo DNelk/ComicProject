@@ -21,6 +21,7 @@ app.Player = function(){
         this.jumpHeight = 200;
         this.jumping = true;
 	    this.health = 100;
+        this.maxHealth = 100;
 	    this.r = 1.0;
         this.g = 0.0;
         this.b = 0.0;
@@ -93,6 +94,7 @@ app.Player = function(){
 	
 	//movement for the player
 	p.moveLeft = function(){
+        console.log(this.speed * this.age);
 		this.accel.x -= this.speed * this.age;
 		this.direction = -1;
 	};
@@ -115,7 +117,12 @@ app.Player = function(){
     };
     
     //Age the player
-    p.age = function(){
+    p.ageUp = function(){
+        this.age -= 0.2;
+        app.Utilities.clamp(this.age, 0.1, 1);
+        this.maxHealth = this.maxHealth * this.age;
+        this.health = this.maxHealth;
+        this.r *= 0.75;
     };
     
     p.takeDamage = function(damage){

@@ -24,7 +24,7 @@ app.Game = {
   enemies: [],  //Array of enemy characters
   enemyCount: 10,
   gameState: app.GAME_STATES.DEFAULT, //The state of the game
-
+  blink: false,
   //tileAudio : undefined, //Audio Var
 
   init: function(){
@@ -51,8 +51,6 @@ app.Game = {
   },
 
   reset: function(){
-	this.levelScore = 0; //Reset the score
-	this.moveCount = 0; //Reset Moves
 	this.timer = 0;
 	this.fillEnemies();
     this.player = new app.Player(320,app.CANVAS_HEIGHT);
@@ -155,6 +153,8 @@ app.Game = {
 	       if(app.keysDown[app.KEYS.KEY_D]){
 	       	   app.keysDown[app.KEYS.KEY_D] = false; //So they only register once
                 this.player.moveRight();
+               if(this.gameState == app.GAME_STATES.ROUND_OVER)
+                   this.nextLevel();
 	       }                      
 	                              
 	       if(app.keysDown[app.KEYS.KEY_ENTER]){
@@ -175,7 +175,8 @@ app.Game = {
 				i--;
 			}
 		} 
-		
+		if(this.enemies.length == 0)
+            this.gameState = app.GAME_STATES.ROUND_OVER
 		//loop through bullets and make them move, and delete them if necessary
 		for( var i = 0; i < this.player.bullets.length; i++ )
 		{
@@ -240,8 +241,14 @@ app.Game = {
   
   //Draw the GUI
   drawGUI: function(){
-    // draw move text
-	this.drawText("Score: " + this.levelScore, app.CANVAS_WIDTH - 180, 20, 16, "white");
+    // draw hp & text
+	this.ctx.save();
+    this.ctx.fillStyle = "white";
+    this.drawText("Health", 20,20,20,"white");
+    this.ctx.fillRect(20,25,200,25);
+    this.ctx.fillStyle = "#00ff00";
+    this.ctx.fillRect(21,26,this.player.health/this.player.maxHealth * 200, 23);
+    this.ctx.restore();
   
     if(this.gameState == app.GAME_STATES.BEGIN){
       this.ctx.save();
@@ -250,19 +257,30 @@ app.Game = {
       this.ctx.restore();
     }
 
+    
     if(this.gameState == app.GAME_STATES.ROUND_OVER){
-      this.ctx.save();
-      this.ctx.textAlign = "center";
-      this.ctx.textBaseline = "middle";
-  	  this.ctx.save();
-  	  this.ctx.globalAlpha = 0.6;
-  	  this.ctx.fillStyle = "black";
-  	  this.ctx.fillRect(0,0,app.CANVAS_WIDTH, app.CANVAS_HEIGHT);
-  	  this.ctx.restore();
-  	  this.ctx.restore();
-  	  this.drawText("Round Over!", app.CANVAS_WIDTH/2, app.CANVAS_HEIGHT/2 - 40, 50, "white");
-  	  this.drawText("Click anywhere to continue...", app.CANVAS_WIDTH/2, app.CANVAS_HEIGHT/2 + 35, 35, "white");
-      this.ctx.restore();
+      this.timer++;
+      if(this.timer == 10){
+          this.blink = !this.blink;
+          this.timer = 0;
+      }
+      if(this.blink){
+        this.ctx.save();
+        this.ctx.fillStyle = "yellow";
+        this.ctx.translate(app.CANVAS_WIDTH-200,app.CANVAS_HEIGHT/2-60);
+        this.ctx.scale(75,60);
+        this.ctx.beginPath();
+        this.ctx.moveTo(0,0.5);
+        this.ctx.lineTo(1,0.5);
+        this.ctx.lineTo(1,0);
+        this.ctx.lineTo(2,1);
+        this.ctx.lineTo(1,2);
+        this.ctx.lineTo(1,1.5);
+        this.ctx.lineTo(0,1.5);
+        this.ctx.closePath();   
+        this.ctx.fill();
+  	     this.ctx.restore();
+      }
     }
 
     if(this.gameState == app.GAME_STATES.GAME_OVER){
@@ -288,6 +306,12 @@ app.Game = {
 		}
   },
   
+    
+    nextLevel: function(){
+        this.gameState = app.GAME_STATES.DEFAULT;
+        this.player.ageUp();
+        this.fillEnemies();
+    },
   // Utilities
   //Gets the Delta time, which is the change in time between frames. Important for frame animation.
   calculateDeltaTime: function(){
