@@ -63,16 +63,15 @@ app.Game = {
 	//check for player collision with enemy
 	this.enemies.forEach(function(enemy) {
 		if( app.Game.collides(enemy, app.Game.player)) {
-			app.Game.player.health -= 10;
+			app.Game.player.takeDamage(10);
 		}
     });
 	
 	//check collisions with each bullet and enemy
 	this.player.bullets.forEach(function(bullet) {
 		app.Game.enemies.forEach(function(enemy) {
-			console.log(bullet.active);
 			if( app.Game.collides(bullet, enemy) && bullet.active) {
-				enemy.health -= bullet.damage;
+				enemy.takeDamage(bullet.damage);
 				bullet.active = false;
 			}
 		});
@@ -166,13 +165,12 @@ app.Game = {
 		   if(app.keysDown[app.KEYS.KEY_SPACE]){
 				app.keysDown[app.KEYS.KEY_SPACE] = false; //So they only register once
 				this.player.fire();
-				console.log("fire");
 		   }
         this.player.update(dt);
 		
 		for( var i = 0; i < this.enemies.length; i++ ){
 			this.enemies[i].update(dt);
-			if(this.enemies[i].dead){
+			if(this.enemies[i].dead && !this.enemies[i].hit){
 				this.enemies.splice(i,1);
 				i--;
 			}

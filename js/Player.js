@@ -29,11 +29,21 @@ app.Player = function(){
 		this.direction = 1;
 		this.bulletSpeed = 1000;
 		this.bulletDamage = 10;
+        this.hit = false;
+        this.hitTimer = 0;
     };
 
     var p = Player.prototype;
     
     p.update = function(dt){
+        if(this.hitTimer > 0 && this.hit){
+            this.hitTimer -= 10 * dt;
+            //console.log(this.hitTimer)
+        }
+        else{
+            this.hitTimer = 0;
+            this.hit = false;
+        }
         //Move
         this.vel.x = 0;
         this.vel.x += this.accel.x;
@@ -74,6 +84,9 @@ app.Player = function(){
         ctx.save();
         ctx.translate(this.pos.x, this.pos.y);
         ctx.fillStyle = 'rgba('+Math.floor(this.r*255)+","+Math.floor(this.g*255)+","+Math.floor(this.b*255)+","+this.a+")";
+        if(this.hit){
+            ctx.fillStyle = "yellow";
+        }
         ctx.fillRect(-halfW, -halfW, this.width, this.height);
         ctx.restore();
 	};
@@ -103,6 +116,15 @@ app.Player = function(){
     
     //Age the player
     p.age = function(){
+    };
+    
+    p.takeDamage = function(damage){
+        if(!this.hit){
+            this.health -= damage;
+            this.hit = true;
+            this.hitTimer = 5;
+            console.log(this.health);
+        }
     };
     return Player;
 }();

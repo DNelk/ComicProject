@@ -25,11 +25,21 @@ app.Enemy = function(){
         this.g = 0.25;
         this.b = 0.25;
         this.a = 1.0;
+        this.hit = false;
+        this.hitTimer = 0;
     };
 
     var p = Enemy.prototype;
     
     p.update = function(dt){
+        if(this.hitTimer > 0 && this.hit){
+            this.hitTimer -= 10 * dt;
+            //console.log(this.hitTimer)
+        }
+        else{
+            this.hitTimer = 0;
+            this.hit = false;
+        }
 		if(this.health <= 0){
 			this.dead = true;
 			return;
@@ -65,6 +75,9 @@ app.Enemy = function(){
         ctx.save();
         ctx.translate(this.pos.x, this.pos.y);
         ctx.fillStyle = 'rgba('+Math.floor(this.r*255)+","+Math.floor(this.g*255)+","+Math.floor(this.b*255)+","+this.a+")";
+        if(this.hit){
+            ctx.fillStyle = "yellow";
+        }
         ctx.fillRect(-halfW, -halfW, this.width, this.height);
         ctx.restore();
 	};
@@ -85,5 +98,12 @@ app.Enemy = function(){
         }
 	};
 
+    p.takeDamage = function(damage){
+        if(!this.hit){
+            this.health -= damage;
+            this.hit = true;
+            this.hitTimer = 1;
+        }
+    };
     return Enemy;
 }();

@@ -16,6 +16,7 @@ app.Bullet = function(){
 		this.height = 10;
 		this.color = "black";
 		this.damage = damage;
+        this.angle = 0.0;
 	};
 	
 	var p = Bullet.prototype;
@@ -25,6 +26,7 @@ app.Bullet = function(){
 		this.pos.y += this.vel.y * dt;
 		this.active = this.active && checkOutOfBounds(this.pos, this.width, this.height);
 		//console.log(this.active);
+        this.angle += 1;
 	};
 	
 	//Draw the projectile
@@ -32,6 +34,7 @@ app.Bullet = function(){
 	{
 		ctx.save();
 		ctx.translate(this.pos.x, this.pos.y);
+        ctx.rotate(this.angle);
 		ctx.fillStyle = this.color;
 		ctx.fillRect(-this.width/2, -this.height/2, this.width, this.height);
 		ctx.restore();

@@ -20,7 +20,8 @@ app.KEYS = {
 	KEY_W: 87,
 	KEY_A: 65,
 	KEY_D: 68,
-	KEY_ENTER: 13
+	KEY_ENTER: 13,
+    KEY_SPACE: 32
 };
 
 app.keysDown = [];
