@@ -116,6 +116,7 @@ app.Game = {
 	  this.levelIndex = 0;
       this.levelScore = 0;
       this.totalScore = 0;
+	  this.enemies = [];
       this.gameOver = false;
       this.reset();
       this.update();
@@ -173,10 +174,21 @@ app.Game = {
 			if(this.enemies[i].dead && !this.enemies[i].hit){
 				this.enemies.splice(i,1);
 				i--;
+				if( !this.gameOver ) {
+					this.totalScore += 10;
+				}
 			}
 		} 
-		if(this.enemies.length == 0)
+		if(this.enemies.length == 0) {
             this.gameState = app.GAME_STATES.ROUND_OVER
+			if( !this.gameOver ) {
+				this.totalScore += 100;
+			}
+		}
+			
+		if(this.player.health <= 0) {
+			this.gameState = app.GAME_STATES.GAME_OVER
+		}
 		//loop through bullets and make them move, and delete them if necessary
 		for( var i = 0; i < this.player.bullets.length; i++ )
 		{
@@ -285,6 +297,7 @@ app.Game = {
 
     if(this.gameState == app.GAME_STATES.GAME_OVER){
       this.ctx.save();
+	  this.gameOver = true;
       this.ctx.textAlign = "center";
       this.ctx.textBaseline = "middle";
       this.ctx.save();
@@ -294,7 +307,7 @@ app.Game = {
       this.ctx.restore();
       this.drawText("Game Over!", app.CANVAS_WIDTH/2, app.CANVAS_HEIGHT/2 - 40, 50, "white");
       this.drawText("You lasted: " + this.moveCount + " moves", app.CANVAS_WIDTH/2, app.CANVAS_HEIGHT/2, 25, "white");
-	  this.drawText("Final Score: " + this.levelScore, app.CANVAS_WIDTH/2, app.CANVAS_HEIGHT/2 + 30, 25, "#white");
+	  this.drawText("Final Score: " + this.totalScore, app.CANVAS_WIDTH/2, app.CANVAS_HEIGHT/2 + 30, 25, "#white");
       this.ctx.restore();
     }
   },
