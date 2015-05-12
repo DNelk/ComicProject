@@ -179,13 +179,14 @@ app.Game = {
 				}
 			}
 		} 
+	
 		if(this.enemies.length == 0) {
             this.gameState = app.GAME_STATES.ROUND_OVER
 			if( !this.gameOver ) {
 				this.totalScore += 100;
 			}
 		}
-			
+		//if player dies, enter game over state		
 		if(this.player.health <= 0) {
 			this.gameState = app.GAME_STATES.GAME_OVER
 		}
@@ -196,6 +197,19 @@ app.Game = {
 			if(!this.player.bullets[i].active){
 				this.player.bullets.splice(i,1);
 				i--;
+			}
+		}
+		
+		//enemy movement
+		for( var i = 0; i < this.enemies.length; i++ )
+		{
+			if( this.player.pos.x < this.enemies[i].pos.x )
+			{
+				this.enemies[i].moveLeft();
+			}
+			else
+			{
+				this.enemies[i].moveRight();
 			}
 		}
 		
