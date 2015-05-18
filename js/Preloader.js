@@ -28,7 +28,10 @@ app.keysDown = [];
 
 // Media
 app.IMAGES = {
-  //RED: "media/images/red.png",
+  BG: "media/bg.png",
+  START: "media/startscreen.png",
+  CONTROLS: "media/controls.png",
+  GAME_OVER: "media/gameover.png"
 }
 
 app.SOUNDS = {

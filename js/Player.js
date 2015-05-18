@@ -119,10 +119,10 @@ app.Player = function(){
     //Age the player
     p.ageUp = function(){
         this.age -= 0.2;
-        app.Utilities.clamp(this.age, 0.1, 1);
-        this.maxHealth = this.maxHealth * this.age;
+        app.Utilities.clamp(this.age, 0.2, 1);
+        //this.maxHealth = this.maxHealth * this.age;
         this.health = this.maxHealth;
-        this.r *= 0.75;
+        this.r *= 0.60;
     };
     
     p.takeDamage = function(damage){
@@ -130,8 +130,9 @@ app.Player = function(){
             this.health -= damage;
             this.hit = true;
             this.hitTimer = 5;
-            console.log(this.health);
         }
+        if(this.health < 0)
+            this.health = 0;
     };
     return Player;
 }();

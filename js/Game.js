@@ -16,15 +16,29 @@ app.Game = {
   isMouseDown: false, //Is the mouse down?
   gameOver: false, //Is the game over?
   animationID: 0, //Current frame index
+  lastTime: 0,
   levelScore: 0, //Current score - maybe use later
   totalScore: 0, //Overall Score - maybe use later
-  lastTime: 0, //The last actual time since the frame changed
-  timer: 0, //Timer
+  animationTimer: 0, //Timer
+  blinkTimer: 0,
+  textTimer: 0,
+  startFade: 1.0,
   player: undefined, //Player character
   enemies: [],  //Array of enemy characters
   enemyCount: 10,
-  gameState: app.GAME_STATES.DEFAULT, //The state of the game
+  gameState: app.GAME_STATES.BEGIN, //The state of the game
   blink: false,
+  bg: undefined,
+  start:undefined,
+  controls:undefined,
+  goText:undefined,
+  controlFade: 0.0,    
+  bgX: 0,
+  bgY: 0,
+  bgX2: 1600,
+  bgY2: 0,
+  level: 0,
+  goFade: 0.0,
   //tileAudio : undefined, //Audio Var
 
   init: function(){
@@ -45,13 +59,28 @@ app.Game = {
 	this.tileAudio.src = app.SOUNDS.TILE;
     this.tileAudio.volume = 1;
 	*/
+    this.bg = new Image();
+    this.bg.src = app.IMAGES.BG;
+    
+    this.start = new Image();
+    this.start.src = app.IMAGES.START;
+      
+    this.controls = new Image();
+    this.controls.src = app.IMAGES.CONTROLS;
+      
+    this.goText = new Image();
+    this.goText.src = app.IMAGES.GAME_OVER;
     this.reset();
 
     this.update();
   },
 
   reset: function(){
-	this.timer = 0;
+    this.bgX = 0;
+    this.bgX2 = 1600;
+	this.blinkTimer = 0;
+    this.animationTimer = 0;
+    this.level = 1;
 	this.fillEnemies();
     this.player = new app.Player(320,app.CANVAS_HEIGHT);
   },
@@ -109,6 +138,11 @@ app.Game = {
       return;
     }
 
+    if(this.gameState == app.GAME_STATES.BEGIN){
+        this.gameState = app.GAME_STATES.DEFAULT;   
+        this.startFade = 1.0;
+    }
+      
   	//Start all over if the game is over
     if(this.gameState == app.GAME_STATES.GAME_OVER){
       this.gameState = app.GAME_STATES.DEFAULT;
@@ -132,10 +166,27 @@ app.Game = {
   update: function(){
     // Update deltaTime
     var dt = this.calculateDeltaTime();
-	
+      
+    //Animate  
+    if(this.startFade > 0 && this.gameState == app.GAME_STATES.DEFAULT){
+      this.startFade -= 0.01;
+      if(this.startFade < 0)
+          this.startFade = 0;
+    }
+      
+    if(this.animationTimer > 0){
+        this.animationTimer-=10;
+        this.bgX-=10;
+        this.bgX2-=10;
+        if(this.bgX <= -1600)
+            this.bgX = 1600;
+        if(this.bgX2 <= -1600)
+            this.bgX2 = 1600;
+        
+    }
     // Check paused
     // Update methods go in here
-    if(!this.paused){
+    if(!this.paused && this.gameState != app.GAME_STATES.BEGIN && !this.gameOver){
         //KEY PRESSES
 	       if(app.keysDown[app.KEYS.KEY_S]){
 	       	   app.keysDown[app.KEYS.KEY_S] = false; //So they only register once
@@ -154,7 +205,7 @@ app.Game = {
 	       if(app.keysDown[app.KEYS.KEY_D]){
 	       	   app.keysDown[app.KEYS.KEY_D] = false; //So they only register once
                 this.player.moveRight();
-               if(this.gameState == app.GAME_STATES.ROUND_OVER)
+               if(this.gameState == app.GAME_STATES.ROUND_OVER && this.textTimer < 150)
                    this.nextLevel();
 	       }                      
 	                              
@@ -180,8 +231,9 @@ app.Game = {
 			}
 		} 
 	
-		if(this.enemies.length == 0) {
-            this.gameState = app.GAME_STATES.ROUND_OVER
+		if(this.enemies.length == 0 && this.gameState == app.GAME_STATES.DEFAULT) {
+            this.gameState = app.GAME_STATES.ROUND_OVER;
+            this.textTimer = 300;
 			if( !this.gameOver ) {
 				this.totalScore += 100;
 			}
@@ -225,14 +277,27 @@ app.Game = {
 	} 
     for( var i = 0; i < this.player.bullets.length; i++ ){
 			this.player.bullets[i].draw(this.ctx);
-	} 
+	}
+    this.ctx.save();
+    this.ctx.globalAlpha = this.startFade;
+    this.ctx.drawImage(this.start,0,0);
+    this.ctx.restore();
+    
+    if(this.gameState == app.GAME_STATES.BEGIN){
+        this.ctx.save();
+        this.ctx.globalAlpha = this.controlFade;
+        this.ctx.drawImage(this.controls,0,0);
+        this.ctx.restore();
+        this.controlFade += 0.002;
+    }
+      
     if(this.paused){
       this.drawPauseScreen();
       return; //Don't count this as a frame since no one was playing
     }
-
+    
     // Loop
-    this.animationID = requestAnimationFrame( this.update.bind(this) );
+    this.animationID = requestAnimationFrame( this.update.bind(this) );  
   },
 
 
@@ -240,7 +305,7 @@ app.Game = {
   
   //Draw text
   drawText: function(string, x, y, size, color) {
-    this.ctx.font = '900 '+size+'px Arial';
+    this.ctx.font = '700 '+size+'px Kalam';
     this.ctx.fillStyle = color;
     this.ctx.fillText(string, x, y);
   },
@@ -250,6 +315,8 @@ app.Game = {
     this.ctx.save();
     this.ctx.fillStyle = "gray";
     this.ctx.fillRect(0,0,app.CANVAS_WIDTH, app.CANVAS_HEIGHT);
+    this.ctx.drawImage(this.bg,this.bgX,this.bgY);
+    this.ctx.drawImage(this.bg,this.bgX2,this.bgY2);
     this.ctx.restore();
   },
   
@@ -285,10 +352,10 @@ app.Game = {
 
     
     if(this.gameState == app.GAME_STATES.ROUND_OVER){
-      this.timer++;
-      if(this.timer == 10){
+      this.blinkTimer++;
+      if(this.blinkTimer == 10){
           this.blink = !this.blink;
-          this.timer = 0;
+          this.blinkTimer = 0;
       }
       if(this.blink){
         this.ctx.save();
@@ -307,6 +374,38 @@ app.Game = {
         this.ctx.fill();
   	     this.ctx.restore();
       }
+      if(this.textTimer > 0){
+        this.textTimer--;  
+        this.ctx.save();
+        this.ctx.globalAlpha = this.textTimer/300;
+        this.ctx.textAlign = "center";
+        this.ctx.textBaseline = "middle";
+        this.ctx.save();
+        this.ctx.globalAlpha = this.textTimer/300;
+        this.ctx.fillStyle = "black";
+        this.ctx.fillRect(0,0,app.CANVAS_WIDTH, app.CANVAS_HEIGHT);
+        this.ctx.restore();
+        switch(this.level){
+                case 1: 
+                this.drawText("Thank You! You're a hero!!", app.CANVAS_WIDTH/2, app.CANVAS_HEIGHT/2 - 40, 50, "white");
+                break;
+                case 2: 
+                this.drawText("Once again,", app.CANVAS_WIDTH/2, app.CANVAS_HEIGHT/2 - 40, 50, "white");
+                this.drawText("you've saved the day!", app.CANVAS_WIDTH/2, app.CANVAS_HEIGHT/2 + 10, 50, "white");
+                break;
+                case 3: 
+                this.drawText("But are you really", app.CANVAS_WIDTH/2, app.CANVAS_HEIGHT/2 - 40, 50, "white");
+                 this.drawText("trying to help us?!", app.CANVAS_WIDTH/2, app.CANVAS_HEIGHT/2 + 10, 50, "white");
+                break;
+                case 4: 
+                this.drawText("Mind your own business.", app.CANVAS_WIDTH/2, app.CANVAS_HEIGHT/2 - 40, 50, "white");
+                break;
+                default: 
+                this.drawText("We don't want you anymore.", app.CANVAS_WIDTH/2, app.CANVAS_HEIGHT/2 - 40, 50, "white");
+                
+        }
+        this.ctx.restore();
+    }
     }
 
     if(this.gameState == app.GAME_STATES.GAME_OVER){
@@ -314,15 +413,12 @@ app.Game = {
 	  this.gameOver = true;
       this.ctx.textAlign = "center";
       this.ctx.textBaseline = "middle";
-      this.ctx.save();
-      this.ctx.globalAlpha = 0.6;
+      this.ctx.globalAlpha = this.goFade;
       this.ctx.fillStyle = "black";
-      this.ctx.fillRect(0,0,app.CANVAS_WIDTH, app.CANVAS_HEIGHT);
+      this.ctx.fillRect(0,0,app.CANVAS_WIDTH, app.CANVAS_HEIGHT); 
+      this.ctx.drawImage(this.goText,0,0);
       this.ctx.restore();
-      this.drawText("Game Over!", app.CANVAS_WIDTH/2, app.CANVAS_HEIGHT/2 - 40, 50, "white");
-      this.drawText("You lasted: " + this.moveCount + " moves", app.CANVAS_WIDTH/2, app.CANVAS_HEIGHT/2, 25, "white");
-	  this.drawText("Final Score: " + this.totalScore, app.CANVAS_WIDTH/2, app.CANVAS_HEIGHT/2 + 30, 25, "#white");
-      this.ctx.restore();
+      this.goFade+=0.005;    
     }
   },
   
@@ -336,6 +432,8 @@ app.Game = {
     
     nextLevel: function(){
         this.gameState = app.GAME_STATES.DEFAULT;
+        this.animationTimer = 400;
+        this.level++;
         this.player.ageUp();
         this.fillEnemies();
     },
